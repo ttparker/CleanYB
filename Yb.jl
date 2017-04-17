@@ -25,9 +25,10 @@ function Yb(Jzz::Float64, Jpm::Float64, Jpmpm::Float64, Jzpm::Float64, T::Float6
 
   # initialize spins randomly:
   spins = Array{Float64}(L, L, 3)  # first index is n_2, second is n_3
+  initialOrientations = rand(L, L, 2)
   for i in 1:L
     for j in 1:L
-      spins[i, j, :] = randomSpin()
+      spins[i, j, :] = randomSpin(initialOrientations[i, j, 1], initialOrientations[i, j, 2])
     end
   end
   # measure the energy of the initial spin configuration:

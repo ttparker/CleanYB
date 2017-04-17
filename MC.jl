@@ -27,23 +27,25 @@ function MCRun(Jzz::Float64, Jpm::Float64, Jpmpm::Float64, Jzpm::Float64, T::Flo
   println(f, "AverageEnergy: ", mean(energyList) / system.N, "\nAveragePsi: ", real(psiAvg), "+", imag(psiAvg), "I\n")
 end
 
-function randomSpin()
-  z = 2 * rand() - 1
+function randomSpin(r1::Float64, r2::Float64)
+  z = 2 * r1 - 1
   s = sqrt(1 - z^2)
-  theta = 2 * pi * rand()
+  theta = 2 * pi * r2
   [s * cos(theta), s * sin(theta), z]
 end
 
 function MCSweep!(sys::Yb)
+  ns = rand(1:sys.L, sys.N, 2) # generating all rands at once saves RNG call overhead
+  rands = rand(sys.N, 3)
   for step = 1:sys.N
-    n2, n3 = rand(1:sys.L, 2)  # pick a spin to flip
+    n2, n3 = ns[step, :]  # pick a spin to flip
     nw = mod1(n2 + 1, sys.L)
     se = mod1(n2 - 1, sys.L)
     sw = mod1(n3 + 1, sys.L)
     ne = mod1(n3 - 1, sys.L)
-    candidate = randomSpin()  # candidate new orientation
+    candidate = randomSpin(rands[step, 1], rands[step, 2])  # candidate new orientation
     DeltaE = dot(candidate - sys.spins[n2, n3, :], sys.Ja1 * (sys.spins[se, ne, :] + sys.spins[nw, sw, :]) + sys.Ja2 * (sys.spins[nw, n3, :] + sys.spins[se, n3, :]) + sys.Ja3 * (sys.spins[n2, sw, :] + sys.spins[n2, ne, :]))
-    if DeltaE <= 0 || rand() < exp(-DeltaE / sys.T)
+    if DeltaE <= 0 || rands[step, 3] < exp(-DeltaE / sys.T)
       sys.spins[n2, n3, :] = candidate  # replace spin by candidate
       sys.energy += DeltaE
     end
