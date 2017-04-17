@@ -13,18 +13,12 @@ function MCRun(Jzz::Float64, Jpm::Float64, Jpmpm::Float64, Jzpm::Float64, T::Flo
 
   # write results to file:
   println(f, "T: ", T)
-  println(f, "Energies:")  # lines 16-20 write each sweep's energy
-  for energy in energyList
-    print(f, energy / system.N, " ")
-  end
-  println(f)
-  println(f, "Psis:")  # lines 21-25 write each sweep's psi
-  for psi in psiList
-    print(f, real(psi), "+", imag(psi), "I ")
-  end
-  println(f)
+  println(f, "Energies:")
+  writedlm(f, energyList' / system.N, ", ")
+  println(f, "Psis:")
+  writedlm(f, psiList', ", ")
   psiAvg = mean(psiList)
-  println(f, "AverageEnergy: ", mean(energyList) / system.N, "\nAveragePsi: ", real(psiAvg), "+", imag(psiAvg), "I\n")
+  println(f, "AverageEnergy: ", mean(energyList) / system.N, "\nAveragePsi: ", psiAvg, "\n")
 end
 
 function randomSpin(r1::Float64, r2::Float64)
