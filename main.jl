@@ -1,19 +1,17 @@
 include("Yb.jl")  # details of this specific system
 include("MC.jl")  # MC algorithm
 
-thermalizationSweeps = 2 * 10^5
-equilibriumSweeps = 1 * 10^6
+f = open("Input", "r")
+lines = readlines(f)  # read in run parameters
+close(f)
+currentJzz, currentJpm, currentJpmpm, currentJzpm = [parse(Float64, s) for s in split(lines[1])]
+currentL = parse(Int64, lines[2])
+Ts = [parse(Float64, s) for s in split(lines[3])]
+thermalizationSweeps, equilibriumSweeps = [eval(parse(s)) for s in split(lines[5])]
 
 f = open("Output","w")
 println(f)
-
-currentJzz = 1.
-currentJpm = 0.915
-currentJpmpm = -0.9
-currentJzpm = 0.5
-currentL = 64  # must be even for commensurability
-
-for currentT in 1.5:.1:2.5
+for currentT in Ts  # MC runs
   MCRun(currentJzz, currentJpm, currentJpmpm, currentJzpm, currentT, currentL, thermalizationSweeps, equilibriumSweeps, f)
   println("MC run complete")
 end
