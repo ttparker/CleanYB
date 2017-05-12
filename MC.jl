@@ -16,7 +16,7 @@ function MCRun(Jzz::Float64, Jpm::Float64, Jpmpm::Float64, Jzpm::Float64, T::Flo
   println(f, "Energies:")
   writedlm(f, energyList' / system.N, ", ")
   println(f, "Psis:")
-  writedlm(f, psiList', ", ")
+  writedlm(f, transpose(psiList), ", ")
   psiAvg = mean(psiList)
   println(f, "AverageEnergy: ", mean(energyList) / system.N, "\nAveragePsi: ", psiAvg, "\n")
 end
