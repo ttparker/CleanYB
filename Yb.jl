@@ -5,9 +5,9 @@ type Yb
   costheta::Float64  # these two only used in out-of-plane phase
   sintheta::Float64
   # n.n. coupling matrices:
-  Ja1::Array{Float64,2}
-  Ja2::Array{Float64,2}
-  Ja3::Array{Float64,2}
+  Ja1::Matrix{Float64}
+  Ja2::Matrix{Float64}
+  Ja3::Matrix{Float64}
 
   spins::Array{Float64, 3}  # first index is n_2, second is n_3
   energy::Float64
@@ -24,7 +24,7 @@ function Yb(Jzz::Float64, Jpm::Float64, Jpmpm::Float64, Jzpm::Float64, T::Float6
   Ja3 = [2*Jpm-Jpmpm sqrt(3)*Jpmpm sqrt(3)/2*Jzpm; sqrt(3)*Jpmpm 2*Jpm+Jpmpm -1/2*Jzpm; sqrt(3)/2*Jzpm -1/2*Jzpm Jzz]
 
   # initialize spins randomly:
-  spins = Array{Float64}(L, L, 3)  # first index is n_2, second is n_3
+  spins = Array{Float64, 3}(L, L, 3)  # first index is n_2, second is n_3
   initialOrientations = rand(L, L, 2)
   for i in 1:L
     for j in 1:L
