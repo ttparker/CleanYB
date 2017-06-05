@@ -17,8 +17,7 @@ function MCRun(Jzz::Float64, Jpm::Float64, Jpmpm::Float64, Jzpm::Float64, T::Flo
   writedlm(f, energyList' / system.N, ", ")
   println(f, "Psis:")
   writedlm(f, transpose(psiList), ", ")
-  psiAvg = mean(psiList)
-  println(f, "AverageEnergy: ", mean(energyList) / system.N, "\nAveragePsi: ", psiAvg, "\n")
+  println(f)
 end
 
 function randomSpin(r1::Float64, r2::Float64)
