@@ -1,18 +1,18 @@
-function MCRun(Jzz::Float64, Jpm::Float64, Jpmpm::Float64, Jzpm::Float64, T::Float64, L::Int64, thermalizationSweeps::Int64, equilibriumSweeps::Int64, f::IOStream)
-  system = Yb(Jzz, Jpm, Jpmpm, Jzpm, T, L)  # initialize spins
-  for sweep = 1:thermalizationSweeps  # wait for system to thermalize
+function MCRun(params::SystemParameters, f::IOStream)
+  system = Yb(params)  # initialize spins
+  for sweep = 1:params.thermalizationSweeps  # wait for system to thermalize
     MCSweep!(system)
   end
   energyList = Float64[]
   psiList = Complex{Float64}[]  # measurements after each sweep
-  for sweep = 1:equilibriumSweeps  # take equilibrium measurements
+  for sweep = 1:params.equilibriumSweeps  # take equilibrium measurements
     MCSweep!(system)
     push!(energyList, system.energy)
     push!(psiList, measurePsi(system))
   end
 
   # write results to file:
-  println(f, "T: ", T)
+  println(f, "T: ", params.T)
   println(f, "Energies:")
   writedlm(f, energyList' / system.N, ", ")
   println(f, "Psis:")
