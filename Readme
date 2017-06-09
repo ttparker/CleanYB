@@ -1,0 +1,16 @@
+This project contains seven Julia files:
+
+Monte Carlo
+1. "CustomTypes.jl" only defines data types that are used by other files.  It is not executed.
+2. "main.jl" is the main program that executes the Monte Carlo.  It reads the run parameters (couplings, temperature, system size, number Monte Carlo sweeps, etc.) in from a text file named "Input", and saves its results to a file named "Output".  The "Output" files can be quite large (e.g. several gigabytes).
+3. "Yb.jl" contains the details of the form of the general Hamiltonian being simulated.  It is not executed.
+4. "MC.jl" contains the actual Monte Carlo algorithm.  It is not executed.
+
+Data Analysis
+5. "DataAnalysis.jl" reads in one or more raw output files produced by "main.jl" for a specific system, processes the data, and saves the processed data as a JLD file to a subdirectory named "Analyzed/" (which need not already exist).  This file must be run separately for each system (e.g. of a given size).  The data analysis can take several hours for large data files.
+6. "MakePlots" reads in the processed data produced for the various systems by "DataAnalysis.jl" and combines it into plots displaying the energy, heat capacity, order parameter, and Binder ratios as a function of temperatures for various systems.
+7. "EnergyHistogram" reads in a raw data file produced by "main.jl" and plots the energy distribution at a single temperature for a single system.
+
+Dependencies:
+"main.jl" includes "CustomTypes.jl", "Yb.jl", and "MC.jl".
+"DataAnalysis.jl" and "MakePlots.jl" include "CustomTypes.jl".
