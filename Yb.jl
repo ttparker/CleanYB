@@ -37,7 +37,7 @@ function Yb(params::SystemParameters)
     for n3 in 1:params.L
       nw = mod1(n2 + 1, params.L)
       sw = mod1(n3 + 1, params.L)
-      energy += dot(spins[n2, n3, :], Ja1 * spins[nw, sw, :] + Ja2 * spins[nw, n3, :] + Ja3 * spins[n2, sw, :])  # only go "forward" to avoid double-counting
+      energy += dot(spins[n2, n3, :], Ja1 * spins[nw, sw, :] + Ja2 * spins[nw, n3, :] + Ja3 * spins[n2, sw, :])  # only go "west" to avoid double-counting
     end
   end
 
