@@ -31,7 +31,8 @@ pyplot(markersize = 6)
 Plots.scalefontsizes(1.75)
 combineSystems("E/N", "Energy density", x -> x.avgEnergies, systems, "Energy")
 combineSystems("C", "Heat capacity", x -> x.energyVariances .* x.params.L.^2 ./ x.Ts.^2, systems, "HeatCapacity")
-combineSystems("\$|\\langle \\psi \\rangle|\$", "Order parameter", x -> x.absAvgPsis, systems, "OrderParameter")
+combineSystems("\$|\\langle \\psi \\rangle|\$", "Order parameter", x -> x.absAvgPsis, systems, "OrderParameter1")
+combineSystems("\$\\langle |\\psi| \\rangle\$", "Order parameter", x -> x.avgAbsPsis, systems, "OrderParameter2")
 combineSystems("\$Q_2\$", "Binder ratio \$Q_2\$", x -> x.avgAbsPsi2s ./ x.avgAbsPsis.^2, systems, "BinderRatio")
 
 # Break down various order parameters for each system:
