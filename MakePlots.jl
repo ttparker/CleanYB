@@ -1,4 +1,6 @@
-const filenames = ["L46", "L64"]  # Names of analyzed data files to combine into plots
+const filenames = []  # Names of analyzed data files to combine into plots
+const minT =   # for zoomed-in plots
+const maxT =
 
 import JLD
 include("CustomTypes.jl")
@@ -12,6 +14,11 @@ function combineSystems(plotyLabel::AbstractString, plotTitle::String, f::Functi
     plot!(systems[i].Ts, data, seriestype = :scatter, color = i, label = systems[i].legendLabel)
   end
   savefig("Analyzed/" * plotFilename * ".png")
+end
+
+function selectTs(system::SystemSummary, criterion)
+  elements = filter(i -> criterion(system.Ts[i]), sortperm(system.Ts))
+  SystemSummary(system.params, system.Ts[elements], system.avgEnergies[elements], system.energyVariances[elements], system.absAvgPsis[elements], system.avgAbsPsis[elements], system.absAvgPsi2s[elements], system.avgAbsPsi2s[elements], system.legendLabel)
 end
 
 # Read in data from Analyzed folder:
@@ -34,6 +41,9 @@ combineSystems("C", "Heat capacity", x -> x.energyVariances .* x.params.L.^2 ./ 
 combineSystems("\$|\\langle \\psi \\rangle|\$", "Order parameter", x -> x.absAvgPsis, systems, "OrderParameter1")
 combineSystems("\$\\langle |\\psi| \\rangle\$", "Order parameter", x -> x.avgAbsPsis, systems, "OrderParameter2")
 combineSystems("\$Q_2\$", "Binder ratio \$Q_2\$", x -> x.avgAbsPsi2s ./ x.avgAbsPsis.^2, systems, "BinderRatio")
+
+# zoom into Binder ratio plot:
+combineSystems("\$Q_2\$", "Binder ratio \$Q_2\$", x -> x.avgAbsPsi2s ./ x.avgAbsPsis.^2, [selectTs(sys, T -> minT <= T <= maxT) for sys in systems], "ZoomedBinderRatio")
 
 # Break down various order parameters for each system:
 for system in systems
