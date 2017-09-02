@@ -1,5 +1,7 @@
-const T = "1.5"  # Temperature of energy distribution to be plotted
-const dataFile = "Output"  # raw data file containing that temperature run
+
+const L = "128"
+const T = "1.56"  # Temperature of energy distribution to be plotted
+const dataFile = "Data/L" * L * "/Block7"  # raw data file containing that temperature run
 
 f = open(dataFile, "r")
 line = ""
@@ -17,6 +19,6 @@ close(f)
 using Plots
 pyplot()
 Plots.scalefontsizes(1.75)
-histogram(energies, normed = true, xlabel = "E", ylabel = "p(E)", title = "Energy distribution at T = " * T, legend = :none)
+histogram(energies, bins = 50, normed = true, xlabel = "E", ylabel = "p(E)", title = "Energy distribution\nfor L = " * L * ", T = " * T, legend = :none)
 mkpath("Analyzed")
-savefig("Analyzed/EnergyHistogram.png")
+savefig("Analyzed/L" * L * "EnergyHistogram.png")
