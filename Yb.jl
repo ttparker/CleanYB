@@ -2,8 +2,6 @@ type Yb
   # system parameters:
   L::Int64
   T::Float64
-  costheta::Float64  # these two only used in out-of-plane phase
-  sintheta::Float64
   # n.n. coupling matrices:
   Ja1::Matrix{Float64}
   Ja2::Matrix{Float64}
@@ -11,6 +9,10 @@ type Yb
 
   spins::Array{Float64, 3}  # first index is n_2, second is n_3
   energy::Float64
+  CA::Vector{Complex{Float64}}
+  CB::Vector{Complex{Float64}}
+  CC::Vector{Complex{Float64}}
+  CD::Vector{Complex{Float64}}
 
   # system-size-dependent quantities for making measurements:
   evenRange::StepRange{Int64,Int64}  # even integers from 2 to L
@@ -41,6 +43,25 @@ function Yb(params::SystemParameters)
     end
   end
 
-  x = (params.Jpmpm + sqrt(params.Jzpm^2 + params.Jpmpm^2)) / params.Jzpm
-  Yb(params.L, params.T, -1 / sqrt(1 + x^2), x / sqrt(1 + x^2), Ja1, Ja2, Ja3, spins, energy, 2:2:params.L, 1:2:(params.L-1), params.L^2)
+  # construct the C vectors for the order parameter:
+  CA = Vector{Complex{Float64}}()
+  CB = Vector{Complex{Float64}}()
+  CC = Vector{Complex{Float64}}()
+  CD = Vector{Complex{Float64}}()
+  if params.Jpmpm < 0
+    CA = [3/2, 3/2*im, 0]
+    CB = [1/2, -3/2*im, 0]
+    CC = [-1-sqrt(3)/2*im, -sqrt(3)/2, 0]
+    CD = [-1+sqrt(3)/2*im, sqrt(3)/2, 0]
+  else
+    x = (params.Jpmpm + sqrt(params.Jzpm^2 + params.Jpmpm^2)) / params.Jzpm
+    costheta = -1 / sqrt(1 + x^2)
+    sintheta = x / sqrt(1 + x^2)
+    CA = [-3/2*im*system.sintheta, 3/2*system.sintheta, 0]
+    CB = [3/2*im*system.sintheta, 1/2*system.sintheta, 2*system.costheta]
+    CC = [sqrt(3)/2*system.sintheta, (-1-sqrt(3)/2*im)*system.sintheta, (-1+sqrt(3)*im)*system.costheta]
+    CD = [-sqrt(3)/2*system.sintheta, (-1+sqrt(3)/2*im)*system.sintheta, (-1-sqrt(3)*im)*system.costheta]
+  end
+
+  Yb(params.L, params.T, Ja1, Ja2, Ja3, spins, energy, CA, CB, CC, CD, 2:2:params.L, 1:2:(params.L-1), params.L^2)
 end
