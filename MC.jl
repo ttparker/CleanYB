@@ -32,7 +32,7 @@ function MCSweep!(system::Yb, measure::Bool)
         end
       end
       system.spins[n2, n3, :] = candidate  # replace spin by candidate
-      system.energy += DeltaE
+      system.Energy += DeltaE
     end
   end
 end
@@ -62,18 +62,18 @@ function MCRun(params::SystemParameters, f::IOStream)
   system.MD = sublatticeMagnetization(system.spins, evenRange, oddRange)
 
   # measurement sweeps:
-  energyList = Float64[]
+  EnergyList = Float64[]
   psiList = Complex{Float64}[]  # measurements after each sweep
   for sweep = 1:params.equilibriumSweeps  # take equilibrium measurements
     MCSweep!(system, true)
-    push!(energyList, system.energy)
+    push!(EnergyList, system.Energy)
     push!(psiList, (dot(system.MA, system.CA) + dot(system.MB, system.CB) + dot(system.MC, system.CC) + dot(system.MD, system.CD)) / system.N)
   end
 
   # write results to file:
   println(f, "T: ", params.T)
   println(f, "Energies:")
-  writedlm(f, energyList' / system.N, ", ")
+  writedlm(f, EnergyList' / system.N, ", ")
   println(f, "Psis:")
   writedlm(f, transpose(psiList), ", ")
   println(f)

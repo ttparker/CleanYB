@@ -8,7 +8,7 @@ type Yb
   Ja3::Matrix{Float64}
 
   spins::Array{Float64, 3}  # first index is n_2, second is n_3
-  energy::Float64
+  Energy::Float64
   MA::Vector{Float64}  # Total (i.e. extensive) magnetizations
   MB::Vector{Float64}
   MC::Vector{Float64}
@@ -34,12 +34,12 @@ function Yb(params::SystemParameters)
     end
   end
   # measure the energy of the initial spin configuration:
-  energy = 0.
+  Energy = 0.
   for n2 in 1:params.L
     for n3 in 1:params.L
       nw = mod1(n2 + 1, params.L)
       sw = mod1(n3 + 1, params.L)
-      energy += dot(spins[n2, n3, :], Ja1 * spins[nw, sw, :] + Ja2 * spins[nw, n3, :] + Ja3 * spins[n2, sw, :])  # only go "west" to avoid double-counting
+      Energy += dot(spins[n2, n3, :], Ja1 * spins[nw, sw, :] + Ja2 * spins[nw, n3, :] + Ja3 * spins[n2, sw, :])  # only go "west" to avoid double-counting
     end
   end
 
@@ -59,5 +59,5 @@ function Yb(params::SystemParameters)
     CD = [-sqrt(3)/2*sintheta, (-1+sqrt(3)/2*im)*sintheta, (-1-sqrt(3)*im)*costheta]
   end
 
-  Yb(params.L, params.T, Ja1, Ja2, Ja3, spins, energy, Float64[], Float64[], Float64[], Float64[], CA, CB, CC, CD, params.L^2)
+  Yb(params.L, params.T, Ja1, Ja2, Ja3, spins, Energy, Float64[], Float64[], Float64[], Float64[], CA, CB, CC, CD, params.L^2)
 end
