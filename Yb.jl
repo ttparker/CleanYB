@@ -44,10 +44,6 @@ function Yb(params::SystemParameters)
   end
 
   # construct the C vectors for the order parameter:
-  CA = Vector{Complex{Float64}}()
-  CB = Vector{Complex{Float64}}()
-  CC = Vector{Complex{Float64}}()
-  CD = Vector{Complex{Float64}}()
   if params.Jpmpm < 0
     CA = [3/2, 3/2*im, 0]
     CB = [1/2, -3/2*im, 0]
@@ -63,5 +59,5 @@ function Yb(params::SystemParameters)
     CD = [-sqrt(3)/2*sintheta, (-1+sqrt(3)/2*im)*sintheta, (-1-sqrt(3)*im)*costheta]
   end
 
-  Yb(params.L, params.T, Ja1, Ja2, Ja3, spins, energy, Vector{Float64}(), Vector{Float64}(), Vector{Float64}(), Vector{Float64}(), CA, CB, CC, CD, params.L^2)
+  Yb(params.L, params.T, Ja1, Ja2, Ja3, spins, energy, Float64[], Float64[], Float64[], Float64[], CA, CB, CC, CD, params.L^2)
 end
