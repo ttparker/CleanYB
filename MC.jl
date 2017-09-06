@@ -1,35 +1,3 @@
-function MCRun(params::SystemParameters, f::IOStream)
-  system = Yb(params)  # initialize spins
-  for sweep = 1:params.thermalizationSweeps  # thermalization sweeps
-    MCSweep!(system, false)
-  end
-
-  # calculate the magnetization of each sublattice:
-  evenRange = 2:2:params.L
-  oddRange = 1:2:(params.L-1)
-  system.MA = sublatticeMagnetization(system.spins, evenRange, evenRange)
-  system.MB = sublatticeMagnetization(system.spins, oddRange, oddRange)
-  system.MC = sublatticeMagnetization(system.spins, oddRange, evenRange)
-  system.MD = sublatticeMagnetization(system.spins, evenRange, oddRange)
-
-  # measurement sweeps:
-  energyList = Float64[]
-  psiList = Complex{Float64}[]  # measurements after each sweep
-  for sweep = 1:params.equilibriumSweeps  # take equilibrium measurements
-    MCSweep!(system, true)
-    push!(energyList, system.energy)
-    push!(psiList, (dot(system.MA, system.CA) + dot(system.MB, system.CB) + dot(system.MC, system.CC) + dot(system.MD, system.CD)) / system.N)
-  end
-
-  # write results to file:
-  println(f, "T: ", params.T)
-  println(f, "Energies:")
-  writedlm(f, energyList' / system.N, ", ")
-  println(f, "Psis:")
-  writedlm(f, transpose(psiList), ", ")
-  println(f)
-end
-
 function randomSpin(r1::Float64, r2::Float64)
   z = 2 * r1 - 1
   s = sqrt(1 - z^2)
@@ -77,4 +45,36 @@ function sublatticeMagnetization(spins::Array{Float64, 3}, n2Range::StepRange{In
     end
   end
   sublatticeM
+end
+
+function MCRun(params::SystemParameters, f::IOStream)
+  system = Yb(params)  # initialize spins
+  for sweep = 1:params.thermalizationSweeps  # thermalization sweeps
+    MCSweep!(system, false)
+  end
+
+  # calculate the magnetization of each sublattice:
+  evenRange = 2:2:params.L
+  oddRange = 1:2:(params.L-1)
+  system.MA = sublatticeMagnetization(system.spins, evenRange, evenRange)
+  system.MB = sublatticeMagnetization(system.spins, oddRange, oddRange)
+  system.MC = sublatticeMagnetization(system.spins, oddRange, evenRange)
+  system.MD = sublatticeMagnetization(system.spins, evenRange, oddRange)
+
+  # measurement sweeps:
+  energyList = Float64[]
+  psiList = Complex{Float64}[]  # measurements after each sweep
+  for sweep = 1:params.equilibriumSweeps  # take equilibrium measurements
+    MCSweep!(system, true)
+    push!(energyList, system.energy)
+    push!(psiList, (dot(system.MA, system.CA) + dot(system.MB, system.CB) + dot(system.MC, system.CC) + dot(system.MD, system.CD)) / system.N)
+  end
+
+  # write results to file:
+  println(f, "T: ", params.T)
+  println(f, "Energies:")
+  writedlm(f, energyList' / system.N, ", ")
+  println(f, "Psis:")
+  writedlm(f, transpose(psiList), ", ")
+  println(f)
 end
