@@ -1,3 +1,4 @@
+import JLD
 include("CustomTypes.jl")  # non-built-in Julia types
 include("Yb.jl")  # details of this specific system
 include("MC.jl")  # MC algorithm
@@ -12,12 +13,12 @@ readline(f)
 params.thermalizationSweeps, params.equilibriumSweeps = [eval(parse(s)) for s in split(readline(f))]
 close(f)
 
-f = open("Output","w")
+# Main calculation:
+runs = Vector{RawRunData}()
 for currentT in Ts  # MC runs
   params.T = currentT
-  MCRun(params, f)
+  push!(runs, MCRun(params))
   println("MC run complete")
 end
-println(f, "Summary:\nJzz: ", params.Jzz, ", Jpm: ", params.Jpm, ", Jpmpm: ", params.Jpmpm, ", Jzpm: ", params.Jzpm, ", L: ", params.L, "\nThermalization sweeps: ", params.thermalizationSweeps, ", Equilibrium sweeps: ", params.equilibriumSweeps)
-close(f)
+JLD.save("Output.jld", "params", params, "runs", runs)
 println("Done")

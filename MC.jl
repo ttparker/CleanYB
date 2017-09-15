@@ -47,7 +47,7 @@ function sublatticeMagnetization(spins::Array{Float64, 3}, n2Range::StepRange{In
   sublatticeM
 end
 
-function MCRun(params::SystemParameters, f::IOStream)
+function MCRun(params::SystemParameters)
   system = Yb(params)  # initialize spins
   for sweep = 1:params.thermalizationSweeps  # thermalization sweeps
     MCSweep!(system, false)
@@ -69,12 +69,5 @@ function MCRun(params::SystemParameters, f::IOStream)
     push!(EnergyList, system.Energy)
     push!(psiList, (dot(system.MA, system.CA) + dot(system.MB, system.CB) + dot(system.MC, system.CC) + dot(system.MD, system.CD)) / system.N)
   end
-
-  # write results to file:
-  println(f, "T: ", params.T)
-  println(f, "Energies:")
-  writedlm(f, EnergyList' / system.N, ", ")
-  println(f, "Psis:")
-  writedlm(f, transpose(psiList), ", ")
-  println(f)
+  RawRunData(params.T, EnergyList / system.N, psiList)
 end
