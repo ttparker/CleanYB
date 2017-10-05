@@ -1,6 +1,5 @@
 const dataFiles = ["Output"]  # Raw data output files for this system to be read
 const filename = "L46"  # Name of file to save this system's data
-const legendLabel = "N = 2116"  # How to label this system's data in plots
 
 import JLD
 include("CustomTypes.jl")
@@ -28,7 +27,7 @@ function analyzeRun!(f::IOStream, system::SystemSummary)
   end
 end
 
-system = SystemSummary(legendLabel)
+system = SystemSummary()
 for dataFile in dataFiles
   f = open(dataFile, "r")
   summarySection = false
