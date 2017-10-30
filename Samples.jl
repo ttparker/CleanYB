@@ -28,7 +28,7 @@ for file in files
   selectedPsis = psis[stepSize:stepSize:length(psis)]
 
   # plot selected psis:
-  plot(Plots.partialcircle(0, 2 * pi, 100, 1.), xlims = (-1, 1), ylims = (-1, 1), label = "", seriescolor = :grey, aspect_ratio = :equal, xlabel = "Re \$\\psi\$", ylabel = "Im \$\\psi\$", title = "Order parameter samples\nfor clean system in in-plane phase\n" * titleN * ", T = " * file[2])
+  plot(Plots.partialcircle(0, 2 * pi, 100, 1.), xlims = (-1, 1), ylims = (-1, 1), label = "", seriescolor = :grey, aspect_ratio = :equal, seriescolor = :matter, xlabel = "Re \$\\psi\$", ylabel = "Im \$\\psi\$", title = "Order parameter samples\nfor clean system in in-plane phase\n" * titleN * ", T = " * file[2])
   plot!(real(selectedPsis), imag(selectedPsis), seriestype = :scatter, label = "")
   mkpath("Samples")
   savefig("Samples/" * L * "T" * file[2] * ".png")
